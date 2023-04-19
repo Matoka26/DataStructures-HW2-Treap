@@ -143,23 +143,48 @@ Nod* maxim(Nod* &rad){
     else
         return rad;
 }
-/*
-Nod* stergere(Nod* nod,int key){
-    if(nod == NULL) return NULL;
-    if(nod->left == NULL && nod->right == NULL){
-        delete nod;
-        nod = NULL;
-        return nod;
-    }
 
-    if(key < nod->key)
+Nod* stergere(Nod* &nod,int key){
+    if(nod == NULL) return NULL;    //arborele e gol
+
+    if(key < nod->key)                 //caut keya
         nod->left = stergere(nod->left , key);
-
     else if(key > nod->key)
         nod->right = stergere(nod->right , key);
 
+    else if(key == nod->key){            //am gasit keya
+        if(nod->left ==NULL){           //n are copil in stanga,il ridic pe ala din dreapta
+            Nod* aux = nod->right;
+            delete nod;
+            nod = aux;
+        }
+        else if(nod->right == NULL){    //n are copil in dreapta,il ridic pe ala din stanga
+            Nod* aux = nod->left;
+            delete nod;
+            nod = aux;
+        }
+    else if(nod->left->prio < nod->right->prio){
+        nod = rotSt(nod);
+        nod->left = stergere(nod->left,key);
+        }
+    else if(nod->right->prio <= nod->left->prio){
+        nod = rotDr(nod);
+        nod->right = stergere(nod->right , key);
+        }
+    }
+    return nod;
 }
-*/
+Nod* dezalocare(Nod* &nod){
+    if(nod != NULL){
+        if(nod->left != NULL)
+            dezalocare(nod->left);
+        if(nod->right != NULL)
+            dezalocare(nod->right);
+    cout<<"cox ";
+    delete nod;
+    nod = NULL;
+    }
+}
 int main()
 {srand(time(nullptr));
     int vecPerechi[] = { 10,40,20,50,30,60};
@@ -172,5 +197,10 @@ int main()
     //afisare(rad);
     //cout<<*minim(rad);
     //cout<<*maxim(rad);
-    //cout<<stergere(rad,60);
+    //afisare(rad);
+    //rad = stergere(rad,40);
+    //afisare(rad);
+    //inorder(rad);
+    //dezalocare(rad);
+
 }
