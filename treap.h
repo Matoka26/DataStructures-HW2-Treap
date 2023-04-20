@@ -244,6 +244,7 @@ int maximN(Treap* &rad, int key){
     else if(rad->key > key){
         return maximN(rad->left,key);
     }
+    return -1;
 }
 
 int minimN(Treap* &rad,int key){
@@ -259,6 +260,7 @@ int minimN(Treap* &rad,int key){
     else if(rad->key < key){
         return minimN(rad->right,key);
     }
+    return -1;
 }
 
 void interval(Treap* &rad,int key1 ,int key2){
