@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 using namespace std;
 
 class Nod{
@@ -78,14 +79,14 @@ void afisare(Nod* rad){
     }
 }
 
-void inorder(Nod* root)
+void inorder(Nod* rad)
 {
-    if (!root)
+    if (rad == NULL)
         return;
 
-    inorder(root->left);
-    cout <<'('<< root->key<<','<<root->prio<<')' << " ";
-    inorder(root->right);
+    inorder(rad->left);
+    cout <<'('<< rad->key<<','<<rad->prio<<')' << " ";
+    inorder(rad->right);
 }
 Nod* inserare(Nod* rad,int key){
     if(rad == NULL){
@@ -174,33 +175,86 @@ Nod* stergere(Nod* &nod,int key){
     }
     return nod;
 }
-Nod* dezalocare(Nod* &nod){
+void dezalocare(Nod* &nod){
     if(nod != NULL){
         if(nod->left != NULL)
             dezalocare(nod->left);
         if(nod->right != NULL)
             dezalocare(nod->right);
-    cout<<"cox ";
     delete nod;
     nod = NULL;
     }
 }
+
+void afisareSplit(Nod* &rad,int key){
+    rad = inserare(rad,key,INFINITY);
+    cout<<"LEFT SUBTREAP\n";
+    inorder(rad->left);
+    cout<<"\nRIGHT SUBTREAP\n";
+    inorder(rad->right);
+    rad = stergere(rad,key);
+}
+Nod* copiere(Nod* &rad,Nod* &aux){
+    if (rad == NULL)
+        return NULL;
+    copiere(rad->left,aux);
+    aux = inserare(aux,rad->key,rad->prio);
+    copiere(rad->right,aux);
+
+    return aux;
+}
+void split(Nod* &rad,Nod* &st , Nod* &dr,int key){
+    Nod *subSt=NULL,*subDr=NULL;
+    rad = inserare(rad , key , INFINITY);
+    subSt = copiere(rad->left,subSt);
+    subDr = copiere(rad->right,subDr);
+    rad = stergere(rad , key);
+    st = subSt;
+    dr = subDr;
+}
+
+Nod* join(Nod* &st,Nod* &dr){
+    if(maxim(st)->key < minim(dr)->key){
+        int key = (maxim(st)->key + minim(dr)->key)/2;
+        Nod *aux = new Nod(key,INFINITY,st,dr);
+        aux = stergere(aux,key);
+        return aux;
+    }
+    return NULL;
+}
+
+Nod* reuniune(Nod* &st , Nod* &dr){
+    if (dr != NULL){
+        if(dr->left !=NULL)
+            st = reuniune(st,dr->left);
+        if(dr->right !=NULL)
+            st = reuniune(st,dr->right);
+        st = inserare(st,dr->key,dr->prio);
+    }
+    return st;
+}
+
 int main()
 {srand(time(nullptr));
     int vecPerechi[] = { 10,40,20,50,30,60};
+    Nod *a,*b;
     Nod* rad = build(vecPerechi,sizeof(vecPerechi)/sizeof(int));
-    rad = inserare(rad,15);
-    rad = inserare(rad,25,69);
-    //cout<<cautare(rad,11);
-    //inorder(rad);
-    //cout<<*rotDr(rad->right);
-    //afisare(rad);
-    //cout<<*minim(rad);
-    //cout<<*maxim(rad);
-    //afisare(rad);
-    //rad = stergere(rad,40);
-    //afisare(rad);
-    //inorder(rad);
-    //dezalocare(rad);
-
+    ///rad = inserare(rad,15);
+    ///rad = inserare(rad,25,69);
+    ///cout<<cautare(rad,11);
+    ///inorder(rad);
+    ///afisare(rotDr(rad->right));      ///rotatiile s ar putea sa dea segfault
+    ///afisare(rotSt(rad->left));       ///sunt implementate auxiliar
+    ///afisare(rad);                    ///nu sa le folosesti asa oricand
+    ///rad = stergere(rad,40);
+    ///afisareSplit(rad,30);
+    ///split(rad,a,b,30);
+    ///afisare(join(a,b));
+    ///rad = reuniune(a,b);
+    ///dezalocare(rad);
+    ///cout<<*minim(rad);
+    ///cout<<*maxim(rad);
+//dezalocare(a);
+//dezalocare(b);
+return 0;
 }
